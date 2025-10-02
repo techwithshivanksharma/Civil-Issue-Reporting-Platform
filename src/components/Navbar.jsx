@@ -19,7 +19,8 @@ function Navbar() {
           {/* Logo */}
           <div className="flex items-center">
             <Link to="/" className="text-2xl font-bold text-blue-600">
-              Civil Issues
+              C I R P
+              <p className="text-xs">Civil Issues Reporting Platform</p>
             </Link>
           </div>
 
