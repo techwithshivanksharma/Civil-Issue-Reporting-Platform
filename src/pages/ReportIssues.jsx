@@ -1,6 +1,7 @@
 import React from "react";
 import { useState,useContext } from "react";
 import { IssueContext } from "../context/IssueContext";
+import toast,{Toaster} from "react-hot-toast";
 
 const ReportIssues = () => {
 
@@ -37,11 +38,16 @@ const ReportIssues = () => {
     console.log(formData);
     addIssue(newIssue); //new issue added to the context
     setFormData({title:"", description:"",location:"", category:"",image: null});
-    alert("Your issue submitted successfully");
+    //alert("Your issue submitted successfully");
+
+    toast.success("Your issue has been submitted 🎉");
   };
 
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white shadow-md rounded-lg mt-6">
+      {/* Toaster for toast notifications */}
+      <Toaster position="top-center" reverseOrder={false}/>
+
       <h2 className="text-2xl font-bold text-blue-600 mb-4 text-center">
         Report an Issue
       </h2>

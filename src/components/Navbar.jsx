@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { MenuIcon, XIcon, UserCircleIcon } from "@heroicons/react/outline";
+import { Bars3Icon, XMarkIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 import { Link, NavLink } from "react-router-dom";
 
 function Navbar() {
@@ -53,9 +53,9 @@ function Navbar() {
               className="text-gray-700 hover:text-blue-500 focus:outline-none"
             >
               {menuOpen ? (
-                <XIcon className="h-6 w-6" />
+                <XMarkIcon className="h-6 w-6" />
               ) : (
-                <MenuIcon className="h-6 w-6" />
+                <Bars3Icon className="h-6 w-6" />
               )}
             </button>
           </div>
