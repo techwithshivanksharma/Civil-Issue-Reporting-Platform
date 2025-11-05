@@ -1,9 +1,16 @@
-import React, { useState } from "react";
-import { Bars3Icon, XMarkIcon, UserCircleIcon } from "@heroicons/react/24/outline";
-import { Link, NavLink } from "react-router-dom";
+import React, { useState, useContext } from "react";
+import {
+  Bars3Icon,
+  XMarkIcon,
+  UserCircleIcon,
+} from "@heroicons/react/24/outline";
+import { Link, NavLink} from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 function Navbar() {
+  const { user, logout } = useContext(AuthContext);
   const [menuOpen, setMenuOpen] = useState(false);
+
 
   const links = [
     { name: "Home", path: "/" },
@@ -19,8 +26,7 @@ function Navbar() {
           {/* Logo */}
           <div className="flex items-center">
             <Link to="/" className="text-2xl font-bold text-blue-600">
-              C I R P
-              <p className="text-xs">Civil Issues Reporting Platform</p>
+              C I R P<p className="text-xs">Civil Issues Reporting Platform</p>
             </Link>
           </div>
 
@@ -40,8 +46,27 @@ function Navbar() {
               </NavLink>
             ))}
 
-            {/*User Icon*/}
-            <UserCircleIcon className="h-6 w-6 text-gray-700 hover:text-blue-500 cursor-pointer" />
+            {/*Added User Section*/}
+
+            {user ? (
+              <div className="flex items-center gap-3">
+                <span className="text-gray-700 text-sm">👋 Hi, {user.name}</span>
+                <button
+                  onClick={logout}
+                  className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition"
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <Link
+                to="/login"
+                className="flex items-center gap-1 bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 transition"
+              >
+                <UserCircleIcon className="h-5 w-5" />
+                Login
+              </Link>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -80,6 +105,32 @@ function Navbar() {
               {link.name}
             </NavLink>
           ))}
+
+          {/* 👇 Added Login/Logout for Mobile */}
+          <div className="px-3 pt-3 border-t">
+            {user ? (
+              <>
+                <p className="text-sm text-gray-600 mb-2">Hi, {user.name}</p>
+                <button
+                  onClick={() => {
+                    logout();
+                    setMenuOpen(false);
+                  }}
+                  className="bg-red-500 text-white px-3 py-1 rounded-md w-full hover:bg-red-600 transition"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <Link
+                to="/login"
+                onClick={() => setMenuOpen(false)}
+                className="block text-center bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 transition"
+              >
+                Login
+              </Link>
+            )}
+          </div>
         </div>
       )}
     </nav>
