@@ -8,10 +8,12 @@ import ViewIssues from "./pages/ViewIssues";
 import DashBoard from "./pages/DashBoard";
 import IssueDetails from "./pages/IssueDetails";
 import Login from "./pages/Login";
+import Signup from './pages/Signup';
 
 import { AuthProvider } from "./context/AuthContext";
 import { IssueProvider } from "./context/IssueContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+
 
 function App() {
   const [count, setCount] = useState(0);
@@ -24,6 +26,7 @@ function App() {
           <Routes>
             {/*Public Route */}
             <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} /> {/* ← NEW ROUTE */}
             <Route path="/" element={<Home />} />
 
             {/*Protected Routes (need login) */}

@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { IssueContext } from "../context/IssueContext";
+import { AuthContext } from "../context/AuthContext";
 import {
   PieChart,
   Pie,
@@ -20,13 +21,13 @@ import {
   BoltIcon,
   TrashIcon,
   QuestionMarkCircleIcon,
-  CloudIcon,
 } from "@heroicons/react/24/outline"; // HeroIcons for categories
 import localforage from "localforage";
 import IssueImagePreview from "./IssueImagePreview";
 
 const DashBoard = () => {
   const { issues } = useContext(IssueContext);
+  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const categories = ["Road", "Water", "Electricity", "Garbage", "Other"];
@@ -53,7 +54,10 @@ const DashBoard = () => {
       name: "In Progress",
       value: issues.filter((i) => i.status === "In Progress").length,
     },
-    { name: "Resolved", value: issues.filter((i) => i.status === "Resolved") },
+    {
+      name: "Resolved",
+      value: issues.filter((i) => i.status === "Resolved").length,
+    },
   ];
 
   const totalIssues = issues.length;
@@ -68,7 +72,7 @@ const DashBoard = () => {
       // Promise.all() → Kyunki hum har issue par async kaam kar rahe hain,
       // Promise.all() ensure karta hai ki sab ke images parallel me load ho jayein
       // aur jab sab complete ho jayein tabhi withImages milta hai.
-      
+
       const withImages = await Promise.all(
         latest.map(async (issue) => {
           if (issue.imageKey) {
@@ -89,6 +93,32 @@ const DashBoard = () => {
 
   return (
     <div className="max-w-6xl mx-auto p-6 mt-6">
+      {/*Full Width Profile Card*/}
+
+      <div className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-2xl shadow-xl mb-10 flex flex-col md:flex-row items-center gap-6">
+        {/* Profile picture placeholder */}
+        <div className="h-24 w-24 rounded-full bg-white/30 flex items-center justify-center text-3xl font-bold shadow-md">
+          {user?.name?.charAt(0)?.toUpperCase() || "U"}
+        </div>
+
+        <div className="flex-1">
+          <h2 className="text-2xl font-bold ">{user?.name}</h2>
+          <p className="text-white/80">{user?.email}</p>
+          <p className="mt-1 inline-block bg-white/20 px-3 py-1 rounded-full text-sm">
+            {user?.role?.toUpperCase()}
+          </p>
+        </div>
+
+        <button
+          onClick={() => navigate("/profile")}
+          className="bg-white text-blue-700 font-semibold px-5 py-2 rounded-xl shadow hover:bg-gray-100 transition"
+        >
+          View Profile
+        </button>
+      </div>
+
+      {/* DAshBoard Title */}
+
       <h2 className="text-3xl font-bold text-blue-500 mb-8 text-center">
         DashBoard Overview
       </h2>
@@ -220,7 +250,7 @@ const DashBoard = () => {
             {recentIssues.map((issue) => (
               <div
                 key={issue.id}
-                className="border rounded-lg overflow-hidden shadow hover:shadow-lg transition cursor-pointer"
+                className="border rounded-lg overflow-hidden shadow hover:shadow-2xl transition cursor-pointer"
                 onClick={() => navigate(`/issue/${issue.id}`)}
               >
                 {issue.imageFile ? (

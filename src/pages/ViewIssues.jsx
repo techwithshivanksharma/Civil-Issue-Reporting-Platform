@@ -4,11 +4,13 @@ import IssueImagePreview from "./IssueImagePreview";
 import { Link, useLocation } from "react-router-dom";
 
 const ViewIssues = () => {
-  const { issues } = useContext(IssueContext);
+  const { getVisibleIssues } = useContext(IssueContext);
   const location = useLocation();
 
-  //Filtered states
+  // 🔴 NEW: visible issues based on role (admin / user)
+  const visibleIssues = getVisibleIssues();
 
+  //Filtered states
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedStatus, setSelectedStatus] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
@@ -20,9 +22,9 @@ const ViewIssues = () => {
     if (cat) setSelectedCategory(cat);
   }, [location]);
 
-  // Apply filters and search
+  // 🔴 UPDATED: Filtering applied on visibleIssues (NOT all issues)
 
-  const filteredIssues = issues.filter((issue) => {
+  const filteredIssues = visibleIssues.filter((issue) => {
     const matchCategory =
       selectedCategory === "All" || issue.category === selectedCategory;
 

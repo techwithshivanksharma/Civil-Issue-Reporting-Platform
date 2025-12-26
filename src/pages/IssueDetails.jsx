@@ -3,7 +3,9 @@ import { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import IssueImagePreview from "./IssueImagePreview";
 import { IssueContext } from "../context/IssueContext";
+import { AuthContext } from "../context/AuthContext";
 import toast from "react-hot-toast";
+import localforage from "localforage";
 
 const IssueDetails = () => {
   const { id } = useParams();
@@ -13,12 +15,26 @@ const IssueDetails = () => {
   const [issue, setIssue] = useState(null);
 
   useEffect(() => {
-    const found = getIssueById(id);
-    if (!found) {
-      setIssue(null);
-      return;
-    }
-    setIssue(found);
+    const laodIssue = async () => {
+      const found = getIssueById(id);
+      if (!found) {
+        setIssue(null);
+        return;
+      }
+
+      if (found.imageKey) {
+        try {
+          const file = await localforage.getItem(found.imageKey);
+          setIssue({ ...found, imageFile: file });
+        } catch (err) {
+          console.error("Error Loading image from IndexedDB:", err);
+          setIssue(found);
+        }
+      } else {
+        setIssue(found);
+      }
+    };
+    laodIssue();
   }, [id, getIssueById]);
 
   if (!issue) {
@@ -30,6 +46,11 @@ const IssueDetails = () => {
   }
 
   const handleStatusChange = (e) => {
+    if (user?.role !== "admin") {
+      toast.error("Only admins can update issue status");
+      return;
+    }
+
     const newStatus = e.target.value;
     updateIssueStatus(issue.id, newStatus);
     setIssue((prev) => ({ ...prev, status: newStatus }));
@@ -37,12 +58,19 @@ const IssueDetails = () => {
   };
 
   const handleDelete = () => {
+    if (user?.role !== "admin" && issue.ownerId !== user?.id) {
+      toast.error("Unauthorized to delete this issue");
+      return;
+    }
+
     if (confirm("Delete Issue? This action cannot be undone.")) {
       deleteIssue(issue.id);
       toast.success("Issue deleted 🗑️");
       navigate("/issues");
     }
   };
+
+  const isAdmin = user?.role === "admin";
 
   return (
     <div className="max-w-3xl mx-auto p-6 bg-white mt-6 rounded-lg shadow-lg">
@@ -65,20 +93,25 @@ const IssueDetails = () => {
 
         <div>
           <label className="block text-sm  text-gray-500">Status</label>
-          <select
-            value={issue.status}
-            onChange={handleStatusChange}
-            className="border rounded px-3 py-1 text-sm mt-1"
-          >
-            <option value="Pending">Pending</option>
-            <option value="In Progress">In Progress</option>
-            <option value="Resolved">Resolved</option>
-          </select>
+          {isAdmin ? (
+            <select
+              value={issue.status}
+              onChange={handleStatusChange}
+              className="border rounded px-3 py-1 text-sm mt-1"
+            >
+              <option value="Pending">Pending</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Resolved">Resolved</option>
+            </select>
+          ) : (
+            //User Read only
+            <div className="mt-1 font-medium text-gray-700">{issue.status}</div>
+          )}
         </div>
       </div>
 
       {/*Unified image preview (works with both imageFile and imageKey */}
-      
+
       {(issue.imageFile || issue.imageKey) && (
         <div className="mt-6">
           <IssueImagePreview file={issue.imageFile} imageKey={issue.imageKey} />
@@ -92,12 +125,15 @@ const IssueDetails = () => {
         >
           Back
         </button>
-        <button
-          onClick={handleDelete}
-          className="px-4 py-2 bg-red-600 text-white rounded"
-        >
-          Delete
-        </button>
+
+        {isAdmin && (
+          <button
+            onClick={handleDelete}
+            className="px-4 py-2 bg-red-600 text-white rounded"
+          >
+            Delete
+          </button>
+        )}
       </div>
     </div>
   );

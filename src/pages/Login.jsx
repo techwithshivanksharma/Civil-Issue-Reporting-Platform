@@ -1,11 +1,17 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import toast from "react-hot-toast";
 
+import { FaUser, FaLock, FaSignInAlt } from "react-icons/fa";
+
 const Login = () => {
-  const { login } = useContext(AuthContext);
+  const { user, login } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) navigate("/dashboard");
+  }, [user, navigate]);
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -25,44 +31,76 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gray-100">
-      <div className="bg-white shadow-lg rounded-lg p-8 w-96">
-        <h2 className="text-2xl font-bold mb-6 text-center text-gray-700">
-          Login To CIRP
+    <div className="min-h-screen flex justify-center items-center bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500 p-4">
+      <div className="backdrop-blur-md bg-white/20 border border-white/30 shadow-xl rounded-2xl p-8 w-full max-w-md text-white animate-fadeIn">
+        
+        {/* Title */}
+        <h2 className="text-3xl font-extrabold text-center text-white-800 mb-6">
+          Welcome Back 👋
         </h2>
+
+        {/* Form */}
         <form onSubmit={handleLogin}>
-          <input
-            type="text"
-            placeholder="Username"
-            required
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            className="border w-full px-3 py-2 mb-3 rounded-md"
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="border w-full px-3 py-2 mb-3 rounded-md"
-          />
+
+          {/* Username Field */}
+          <div className="relative mb-4 ">
+            <FaUser className="absolute left-3 top-3 text-white-500" />
+            <input
+              type="text"
+              placeholder="Username"
+              required
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="border w-full pl-10 pr-3 py-2 rounded-md focus:ring-2 focus:ring-blue-400 outline-none transition"
+            />
+          </div>
+
+          {/* Password Field */}
+          <div className="relative mb-4">
+            <FaLock className="absolute left-3 top-3 text-white-500" />
+            <input
+              type="password"
+              placeholder="Password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="border w-full pl-10 pr-3 py-2 rounded-md focus:ring-2 focus:ring-blue-400 outline-none transition"
+            />
+          </div>
+
+          {/* Error */}
           {error && (
             <p className="text-red-500 text-sm mb-3 text-center">{error}</p>
           )}
+
+          {/* Login Button */}
           <button
             type="submit"
-            className="bg-blue-500 text-white w-full py-2 rounded-md hover:bg-blue-600"
+            className="w-full py-2 bg-green-500 hover:bg-green-700 text-white rounded-md font-semibold flex items-center justify-center gap-2 transition"
           >
+            <FaSignInAlt />
             Login
           </button>
         </form>
 
-        <div className="mt-6 text-sm text-gray-600 text-center">
-          <p>
-            Admin - username <b>admin</b> | password: <b>1234</b>
+        {/* Signup link */}
+        <p className="mt-4 text-center text-sm text-white-700">
+          Don’t have an account?{" "}
+          <span
+            className="text-white-600 font-medium hover:text-yellow-500 cursor-pointer"
+            onClick={() => navigate("/signup")}
+          >
+            Create one
+          </span>
+        </p>
+
+        {/* Test credentials */}
+        <div className="mt-6 text-sm text-gray-700 text-center">
+          <p className="mb-1">
+            <b>Admin:</b> admin / 1234
           </p>
           <p>
-            User - username <b>user</b> | password: <b>1234</b>
+            <b>User:</b> user / 1234
           </p>
         </div>
       </div>
