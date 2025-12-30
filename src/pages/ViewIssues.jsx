@@ -1,14 +1,20 @@
 import React, { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import { IssueContext } from "../context/IssueContext";
 import IssueImagePreview from "./IssueImagePreview";
 import { Link, useLocation } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 const ViewIssues = () => {
-  const { getVisibleIssues } = useContext(IssueContext);
-  const location = useLocation();
+  const { user } = useContext(AuthContext);
 
-  // 🔴 NEW: visible issues based on role (admin / user)
-  const visibleIssues = getVisibleIssues();
+  const { getVisibleIssues } = useContext(IssueContext);
+
+  //SAFETY: fallback to empty array and getting issue based on role "admin" or "user"
+  const visibleIssues = getVisibleIssues ? getVisibleIssues() : [];
+
+  const location = useLocation();
 
   //Filtered states
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -22,7 +28,7 @@ const ViewIssues = () => {
     if (cat) setSelectedCategory(cat);
   }, [location]);
 
-  // 🔴 UPDATED: Filtering applied on visibleIssues (NOT all issues)
+  //Filtering applied on visibleIssues (NOT all issues)
 
   const filteredIssues = visibleIssues.filter((issue) => {
     const matchCategory =

@@ -56,11 +56,6 @@ export const IssueProvider = ({ children }) => {
   };
 
   const updateIssueStatus = (id, status) => {
-    if (!user || user.role !== "admin") {
-      console.warn("Unauthorized status update attempt");
-      return;
-    }
-
     setIssues((prev) =>
       prev.map((it) => (String(it.id) === String(id) ? { ...it, status } : it))
     );
@@ -71,17 +66,12 @@ export const IssueProvider = ({ children }) => {
     if (!issue) return null;
 
     //Admin can access any issue
-    if (user?.role === "admin") return issues;
+    if (user?.role === "admin") return issue;
 
     return issue.ownerId === user?.id ? issue : null;
   };
 
   const deleteIssue = (id) => {
-    if (!user || user.role !== "admin") {
-      console.warn("Unauthorized delete attempt");
-      return;
-    }
-
     setIssues((prev) => prev.filter((it) => String(it.id) !== String(id)));
   };
 

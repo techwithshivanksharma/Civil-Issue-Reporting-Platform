@@ -10,11 +10,21 @@ import localforage from "localforage";
 const IssueDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+
+  const { user } = useContext(AuthContext);
   const { getIssueById, updateIssueStatus, deleteIssue } =
     useContext(IssueContext);
   const [issue, setIssue] = useState(null);
 
   useEffect(() => {
+
+    //If user not logged in he will be redirected to login page.
+    if (!user) {
+      toast.error("Please login to access issue details");
+      navigate("/login");
+      return;
+    }
+    
     const laodIssue = async () => {
       const found = getIssueById(id);
       if (!found) {
@@ -71,6 +81,7 @@ const IssueDetails = () => {
   };
 
   const isAdmin = user?.role === "admin";
+  const canDelete = isAdmin || issue.ownerId === user?.id;
 
   return (
     <div className="max-w-3xl mx-auto p-6 bg-white mt-6 rounded-lg shadow-lg">
@@ -88,7 +99,7 @@ const IssueDetails = () => {
       <div className="mt-4 flex  gap-4">
         <div>
           <span className="text-sm text-gray-500">Category</span>
-          <div className="fonr-medium">{issue.category || "Other"}</div>
+          <div className="font-medium">{issue.category || "Other"}</div>
         </div>
 
         <div>
@@ -126,7 +137,7 @@ const IssueDetails = () => {
           Back
         </button>
 
-        {isAdmin && (
+        {canDelete && (
           <button
             onClick={handleDelete}
             className="px-4 py-2 bg-red-600 text-white rounded"
