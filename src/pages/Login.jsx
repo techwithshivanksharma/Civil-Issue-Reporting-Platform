@@ -19,14 +19,23 @@ const Login = () => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    const success = login(username, password);
+    
+    const loggedInUser = login(username, password);
+    console.log("Logged In User: ", loggedInUser);
 
-    if (success) {
-      toast.success("Login Successful 👋");
-      navigate("/dashboard");
-    } else {
+    if(!loggedInUser){
       setError("Invalid Credentials");
       toast.error("Invalid Username or Password ❌");
+      return;
+    }
+
+    toast.success("Login Successfull 👋");
+    
+    //Role based redirect
+    if(loggedInUser.role === "admin"){
+      navigate("/dashboard");
+    }else{
+      navigate("/userdashboard")
     }
   };
 

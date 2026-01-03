@@ -30,6 +30,13 @@ const DashBoard = () => {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
+  const isAdmin = user?.role === "admin";
+
+  //filtering issues based on role
+  const visibleIssues = isAdmin
+    ? issues
+    : issues.filter((issue) => issue.ownerId === user.id);
+
   const categories = ["Road", "Water", "Electricity", "Garbage", "Other"];
   const ICONS = [
     MapPinIcon,
@@ -39,33 +46,37 @@ const DashBoard = () => {
     QuestionMarkCircleIcon,
   ];
 
+  //category data uses visibleIssues
   const categoryData = categories.map((cat) => ({
     name: cat,
-    value: issues.filter((issue) => issue.category === cat).length,
+    value: visibleIssues.filter((issue) => issue.category === cat).length,
   }));
 
-  //Status Summary
+  //Status Summary based on visibleIssues
   const statusData = [
     {
       name: "Pending",
-      value: issues.filter((i) => i.status === "Pending").length,
+      value: visibleIssues.filter((i) => i.status === "Pending").length,
     },
     {
       name: "In Progress",
-      value: issues.filter((i) => i.status === "In Progress").length,
+      value: visibleIssues.filter((i) => i.status === "In Progress").length,
     },
     {
       name: "Resolved",
-      value: issues.filter((i) => i.status === "Resolved").length,
+      value: visibleIssues.filter((i) => i.status === "Resolved").length,
     },
   ];
 
-  const totalIssues = issues.length;
+  const totalIssues = visibleIssues.length;
   const COLORS = ["#ef4444", "#3b82f6", "#eab308", "#22c55e", "#6b7280"];
 
   const [recentIssues, setRecentIssues] = useState([]);
 
   useEffect(() => {
+
+    if(!isAdmin) return; // user will not see recent issues.
+
     const fetchImages = async () => {
       const latest = issues.slice(-5).reverse(); //last five issues
 
@@ -134,21 +145,21 @@ const DashBoard = () => {
         <div className="bg-gray-100 text-gray-700 p-4 rounded-xl shadow text-center">
           <h3 className="text-sm font-medium">Pending</h3>
           <p className="text-3xl font-bold">
-            {issues.filter((i) => i.status === "Pending").length}
+            {visibleIssues.filter((i) => i.status === "Pending").length}
           </p>
         </div>
 
         <div className="bg-yellow-100 text-yellow-700 p-4 rounded-xl shadow text-center">
           <h3 className="text-sm font-medium">In Progress</h3>
           <p className="text-3xl font-bold">
-            {issues.filter((i) => i.status === "In Progress").length}
+            {visibleIssues.filter((i) => i.status === "In Progress").length}
           </p>
         </div>
 
         <div className="bg-green-100 text-green-700 p-4 rounded-xl shadow text-center">
           <h3 className="text-sm font-medium">Resolved</h3>
           <p className="text-3xl font-bold">
-            {issues.filter((i) => i.status === "Resolved").length}
+            {visibleIssues.filter((i) => i.status === "Resolved").length}
           </p>
         </div>
       </div>

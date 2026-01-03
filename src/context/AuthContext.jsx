@@ -59,7 +59,7 @@ export const AuthProvider = ({ children }) => {
     if (found) {
       setUser(found);
       localStorage.setItem("user", JSON.stringify(found));
-      return true;
+      return found;
     }
 
     // Hardcoded Admin
@@ -73,7 +73,7 @@ export const AuthProvider = ({ children }) => {
       };
       setUser(adminUser);
       localStorage.setItem("user", JSON.stringify(adminUser));
-      return true;
+      return adminUser;
     }
 
     return false;
