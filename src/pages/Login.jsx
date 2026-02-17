@@ -102,16 +102,6 @@ const Login = () => {
             Create one
           </span>
         </p>
-
-        {/* Test credentials */}
-        <div className="mt-6 text-sm text-gray-700 text-center">
-          <p className="mb-1">
-            <b>Admin:</b> admin / 1234
-          </p>
-          <p>
-            <b>User:</b> user / 1234
-          </p>
-        </div>
       </div>
     </div>
   );

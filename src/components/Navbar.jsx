@@ -42,7 +42,7 @@ function Navbar() {
           </div>
 
           {/* Desktop Links */}
-          <div className="hidden md:flex space-x-6 items-center">
+          <div className="hidden md:flex space-x-6 items-center ">
             {links.map((link) => (
               <NavLink
                 key={link.name}

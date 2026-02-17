@@ -1,4 +1,4 @@
-import React, { use, useState, useContext} from "react";
+import React, { use, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { FaUser, FaLock, FaUserTag, FaEnvelope } from "react-icons/fa";
@@ -6,7 +6,7 @@ import { AuthContext } from "../context/AuthContext";
 
 const Signup = () => {
   const navigate = useNavigate();
-  const {register} = useContext(AuthContext);
+  const { register } = useContext(AuthContext);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -22,7 +22,7 @@ const Signup = () => {
 
     const result = register(name, email, username, password, role);
 
-    if(!result.success){
+    if (!result.success) {
       setError(result.message);
       toast.error(result.message);
       return;
@@ -101,11 +101,8 @@ const Signup = () => {
             <option className="text-black" value="user">
               User
             </option>
-            <option className="text-black" value="admin">
-              Admin
-            </option>
           </select>
-
+          
           {error && <p className="text-red-300 text-sm text-center">{error}</p>}
 
           {/* Signup Button */}
